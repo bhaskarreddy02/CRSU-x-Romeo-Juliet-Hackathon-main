@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Approach Note: Global Reciprocal Matching with Value-of-Information Clarification</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 19pt;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 2.5px solid #2563eb;
+    padding-bottom: 6px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: #1e3a8a;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 14px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: justify;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background: #cbd5e1;
+    margin: 14px 0;
+  }
+
+  blockquote {
+    margin: 10px 0;
+    padding: 10px 16px;
+    background-color: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    border-radius: 4px;
+    color: #166534;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+
+  blockquote p {
+    margin: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background-color: #1e293b;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: left;
+    padding: 6px 8px;
+    border: 1px solid #1e293b;
+    letter-spacing: 0.02em;
+  }
+
+  td {
+    padding: 5px 8px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  pre {
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 8pt;
+    line-height: 1.4;
+    color: #0f172a;
+    overflow-x: auto;
+    page-break-inside: avoid;
+    margin: 10px 0;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 8.5pt;
+    background-color: #f1f5f9;
+    color: #0369a1;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #e2e8f0;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  ul, ol {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 3px;
+  }
+
+  strong {
+    font-weight: 600;
+    color: #0f172a;
+  }
+</style>
+</head>
+<body>
+<h1 id="approach-note-global-reciprocal-matching-with-value-of-information-clarification">Approach Note: Global Reciprocal Matching with Value-of-Information Clarification</h1>
+<p><strong>Challenge</strong>: CRSU x Romeo &amp; Juliet Hackathon · Vouchsafe Track<br />
+<strong>Document</strong>: Round 1 Research Submission Note (Specification 1.0.0)<br />
+<strong>Date</strong>: October 2026<br />
+<strong>Primary Metric</strong>: Mutual Second-Meeting Intention (MSMI) per 100 Arrived Members  </p>
+<hr />
+<h2 id="1-problem-interpretation-operational-formulation">1. Problem Interpretation &amp; Operational Formulation</h2>
+<p>In the <strong>One Introduction Problem</strong>, an autonomous policy orchestrates sequential introductions across an evolving pool of synthetic candidates over a 60-day decision horizon, followed by a 40-day observation window. At each discrete day <em>t</em> ∈ [0, 59], the policy interacts with the environment through a two-phase protocol:<br />
+1. <strong>Ask Phase</strong>: Allocate a daily budget <em>B</em> = 12 units to clarify unknown attributes. Bundled hard constraints cost 3 units; individual soft fields cost 1 unit.<br />
+2. <strong>Match Phase</strong>: Propose a set of disjoint, feasible reciprocal introductions <em>M_t</em> = {(u₁, v₁), (u₂, v₂), …} among currently available members.</p>
+<h3 id="core-challenges">Core Challenges</h3>
+<ul>
+<li><strong>Strict Non-Overlapping Reciprocity</strong>: An introduction requires concurrent, reciprocal participation. Each member can participate in at most one active introduction at any given time and remains occupied through response and date windows (up to 20+ days).</li>
+<li><strong>Information Incompleteness &amp; Privacy</strong>: Questionnaire fields are substantially incomplete. In the public training pools, <strong>31.3% of hard-constraint fields are unobserved</strong>, and <strong>4.3% are explicitly declined</strong>. A single unverified hard constraint renders a pair non-matchable (<code>needs_clarification</code>), while declined fields can never be bypassed or inferred.</li>
+<li><strong>Delayed &amp; Censored Feedback</strong>: The primary target—<strong>Mutual Second-Meeting Intention (MSMI)</strong>—unfolds along a fragile sequential funnel:<br />
+  $$\text{Introduction} \xrightarrow{\le 7\text{d}} \text{Mutual Acceptance} \xrightarrow{\le 14\text{d}} \text{Date Event} \xrightarrow{\le 3\text{d}} \text{Mutual Second Yes}$$<br />
+  Outcomes mature with substantial delays. Premature evaluation introduces heavy right-censoring bias.</li>
+<li><strong>Systemic Negative Externalities</strong>: Introducing candidate <em>u</em> to <em>v</em> today removes both from the candidate pool for weeks, potentially depriving higher-compatibility future arrivals of their optimal partners.</li>
+</ul>
+<hr />
+<h2 id="2-hypothesis">2. Hypothesis</h2>
+<blockquote>
+<p><strong>Primary Hypothesis</strong>:<br />
+<em>"Global max-weight matching over a feasibility graph + clarifying only when it unlocks a high-value pair beats greedy pair ranking."</em></p>
+</blockquote>
+<h3 id="theoretical-foundations">Theoretical Foundations</h3>
+<ol>
+<li><strong>Suboptimality of Greedy Pair Allocation</strong>:<br />
+   Independent greedy ranking selects pairs sequentially in descending order of individual score. As demonstrated in Section 2 of the specification, greedy allocation creates severe negative externalities. In a four-person subpool where pair (A, B) scores 0.90, (C, D) scores 0.05, and both (A, D) and (B, C) score 0.65, greedy selection takes (A, B) and (C, D) for a total value of 0.95. Global maximum-weight matching selects (A, D) and (B, C), achieving an aggregate value of 1.30 (+36.8%).</li>
+<li><strong>Targeted Value-of-Information (VOI) vs. Blind Clarification</strong>:<br />
+   The reference greedy baseline exhausts the daily budget by querying constraint bundles on the first arbitrary unclarified members in queue order (costing ~205 units per episode). This wastes budget clarifying isolated individuals who have no feasible, high-potential matches in the pool. By contrast, clarifying <em>only</em> when resolving uncertainty unlocks an edge in the top quantile of the predicted reciprocal affinity distribution concentrates the 12-unit daily budget strictly where it produces actionable introductions.</li>
+</ol>
+<hr />
+<h2 id="3-reciprocal-feasibility-eligibility-modeling">3. Reciprocal Feasibility &amp; Eligibility Modeling</h2>
+<p>A pair (u, v) is valid if and only if <code>eligibility(u, v)['status'] == 'feasible'</code>. Feasibility requires symmetric satisfaction across all 11 hard constraints:</p>
+<p>$$\text{Feasible}(u, v) \iff \bigwedge_{k \in \text{HARD}} \text{Check}_k(u, v) \wedge \text{Check}_k(v, u)$$</p>
+<h3 id="hard-constraint-ontology">Hard Constraint Ontology</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Symmetrical Rule &amp; Logic</th>
+<th>Failure Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>age_min</code>, <code>age_max</code></td>
+<td>v.age ∈ [u.age_min, u.age_max] ∧ u.age ∈ [v.age_min, v.age_max]</td>
+<td><code>age</code></td>
+</tr>
+<tr>
+<td><code>who_to_meet</code></td>
+<td>v.gender ∈ u.who_to_meet ∧ u.gender ∈ v.who_to_meet</td>
+<td><code>who_to_meet</code></td>
+</tr>
+<tr>
+<td><code>acceptable_zones</code></td>
+<td>v.zone ∈ u.acceptable_zones ∧ u.zone ∈ v.acceptable_zones</td>
+<td><code>geography</code></td>
+</tr>
+<tr>
+<td><code>relationship_structure</code></td>
+<td>u.relationship_structure == v.relationship_structure (<code>monogamous</code> vs <code>non_monogamous</code>)</td>
+<td><code>relationship_structure</code></td>
+</tr>
+<tr>
+<td><code>smoking</code> / <code>partner_smoking</code></td>
+<td>u.partner_smoking == 'no_smoking' ⇒ v.smoking == 'no' (and reciprocally)</td>
+<td><code>smoking</code></td>
+</tr>
+<tr>
+<td><code>has_children</code> / <code>partner_children</code></td>
+<td>u.partner_children == 'no_children' ⇒ v.has_children == False (and reciprocally)</td>
+<td><code>children_present</code></td>
+</tr>
+<tr>
+<td><code>wants_children</code></td>
+<td>Conflict if {u.wants_children, v.wants_children} == {'yes', 'no'} (<code>unsure</code> permitted)</td>
+<td><code>children_plans</code></td>
+</tr>
+<tr>
+<td><code>schedule</code></td>
+<td>u.schedule ∩ v.schedule ≠ ∅ (at least 1 overlapping slot)</td>
+<td><code>schedule</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="priority-incompleteness-semantics">Priority &amp; Incompleteness Semantics</h3>
+<ul>
+<li><strong>Strict Priority</strong>: Any known violation immediately assigns status <code>infeasible</code>. No soft affinity score or missing attribute can override a hard violation.</li>
+<li><strong>Pending Clarification</strong>: If no hard failure exists but ≥ 1 hard field is unobserved, status is <code>needs_clarification</code>.</li>
+<li><strong>Declined Immutability</strong>: If a candidate refused a required hard field (<code>declined</code>), the constraint remains permanently unverified. The pair is irrecoverably non-matchable.</li>
+</ul>
+<hr />
+<h2 id="4-allocation-method-global-maximum-weight-matching">4. Allocation Method: Global Maximum-Weight Matching</h2>
+<p>Rather than committing pairs greedily, we construct a global compatibility graph <em>G_t = (V_t, E_t)</em> at each day <em>t</em>:<br />
+* <strong>Vertices <em>V_t</em></strong>: Available, arrived candidates (<em>v</em>.available == True).<br />
+* <strong>Edges <em>E_t</em></strong>: Mutually feasible, previously unintroduced pairs:<br />
+  $$E_t = {(u, v) \in V_t \times V_t : u &lt; v, \text{eligibility}(u, v) = \text{'feasible'}, (u, v) \notin \text{PastIntroductions}}$$</p>
+<h3 id="edge-weight-formulation">Edge Weight Formulation</h3>
+<p>Each feasible edge (u, v) ∈ <em>E_t</em> is weighted by composite utility <em>W(u, v)</em>:</p>
+<p>$$W(u, v) = \hat{P}<em>{\text{MSMI}}(u, v) + \lambda</em>{\text{soft}} \cdot S_{\text{soft}}(u, v) + \lambda_{\text{wait}} \cdot \max(w_u, w_v) - \lambda_{\text{slack}} \cdot |w_u - w_v|$$</p>
+<p>Where:<br />
+1. <strong>Predicted Outcome Affinity $\hat{P}_{\text{MSMI}}(u, v)$</strong>: Estimated probability of mutual date and second meeting given observed soft attributes.<br />
+2. <strong>Soft Feature Overlap $S_{\text{soft}}(u, v)$</strong>: Normalized agreement across soft attributes:<br />
+   $$S_{\text{soft}}(u, v) = \frac{1}{|\text{SOFT}|} \sum_{k \in \text{SOFT}} \mathbb{I}[u.\text{fields}[k] == v.\text{fields}[k] \wedge u.\text{fields}[k] \neq \text{None}]$$<br />
+3. <strong>Starvation &amp; Waiting Pressure $w_u = t - u.\text{arrived_day}$</strong>: Linearly escalates matching priority for long-waiting candidates to safeguard pool coverage and prevent starvation.<br />
+4. <strong>Waiting Balance Penalty</strong>: Encourages pairings between members with comparable tenure in the pool.</p>
+<h3 id="optimization-formulation">Optimization Formulation</h3>
+<p>We solve the classical Maximum Weight General Matching problem (Edmonds' Blossom Algorithm):</p>
+<p>$$\max_{M \subseteq E_t} \sum_{(u, v) \in M} W(u, v) \quad \text{subject to} \quad \sum_{e \in M : v \in e} 1 \le 1 \quad \forall v \in V_t$$</p>
+<h3 id="thresholded-patient-matching">Thresholded Patient Matching</h3>
+<p>To avoid forcing low-affinity introductions among newly arrived members who would benefit from waiting for compatible arrivals, an edge (u, v) is included only if:<br />
+$$W(u, v) \ge \theta_{\text{patience}}(w_u, w_v)$$<br />
+Where $\theta_{\text{patience}}$ decays monotonically with waiting time: newly arrived candidates face a high compatibility threshold, whereas candidates approaching pool exit face a relaxed threshold.</p>
+<hr />
+<h2 id="5-clarification-strategy-targeted-value-of-information-evoi">5. Clarification Strategy: Targeted Value-of-Information (EVOI)</h2>
+<p>The reference implementation naively queries <code>constraints</code> bundles for arbitrary unclarified members. In contrast, our strategy deploys a <strong>Targeted Expected Value of Information (EVOI)</strong> policy.</p>
+<pre><code>       Candidate Graph Analysis
+                 │
+  ┌──────────────┴──────────────┐
+  ▼                             ▼
+Confirmed Feasible         Uncertain Pair (u, v)
+  E_feas                    needs_clarification
+  (Direct Matching)             │
+                         Are soft priors &amp; potential
+                         edge weight W(u, v) &gt;= tau?
+                                │
+                    ┌───────────┴───────────┐
+                    ▼                       ▼
+                   YES                      NO
+            Calculate EVOI:          Skip (Preserve
+         Delta Matching Score          Ask Budget)
+                    │
+         Rank asks by EVOI / Cost
+         Execute top asks in budget
+</code></pre>
+<h3 id="clarification-algorithm">Clarification Algorithm</h3>
+<ol>
+<li><strong>Identify Unlocking Opportunities</strong>:<br />
+   Examine candidate pairs (u, v) currently in <code>needs_clarification</code> status that have zero known hard failures.</li>
+<li><strong>Estimate Latent Weight $\tilde{W}(u, v)$</strong>:<br />
+   Compute expected compatibility using observed soft features and empirical base rates of hard constraint concordance.</li>
+<li><strong>Marginal Graph Contribution</strong>:<br />
+   Calculate the expected increase in the global matching weight if (u, v) becomes feasible:<br />
+   $$\Delta \text{Matching}(u, v) = \mathbb{E}\big[\text{Weight}(M(G \cup {(u, v)})) - \text{Weight}(M(G))\big]$$</li>
+<li><strong>Cost-Normalized Priority</strong>:  </li>
+<li>If both <em>u</em> and <em>v</em> have missing hard fields, unlocking requires 6 units (two bundles).</li>
+<li>If only one party has missing fields, unlocking requires 3 units (one bundle).</li>
+<li>Sort candidate queries by $\frac{\Delta \text{Matching}}{\text{Cost}}$ and execute greedily within the daily 12-unit limit.</li>
+<li><strong>Declined Handling</strong>: Never issue queries for fields marked <code>'declined'</code>.</li>
+</ol>
+<hr />
+<h2 id="6-empirical-baselines-initial-benchmark-results">6. Empirical Baselines &amp; Initial Benchmark Results</h2>
+<p>We evaluated the three supplied reference baselines across all six public scenario variants using identical public seeds ($101$) in full 60+40 day evaluation episodes.</p>
+<h3 id="scenario-level-performance-comparison">Scenario-Level Performance Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Baseline</th>
+<th>Scenario</th>
+<th>Arrived</th>
+<th>Served</th>
+<th>Coverage</th>
+<th>Ask Cost</th>
+<th>Mutual Acc.</th>
+<th>Dates</th>
+<th>MSMI</th>
+<th>MSMI/100</th>
+<th>Runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Greedy</strong></td>
+<td><code>development</code></td>
+<td>200</td>
+<td>92</td>
+<td>46.0%</td>
+<td>198</td>
+<td>18</td>
+<td>15</td>
+<td>1</td>
+<td>0.50</td>
+<td>23.2s</td>
+</tr>
+<tr>
+<td><strong>Greedy</strong></td>
+<td><code>sparse</code></td>
+<td>200</td>
+<td>35</td>
+<td>17.5%</td>
+<td>192</td>
+<td>4</td>
+<td>3</td>
+<td>0</td>
+<td>0.00</td>
+<td>19.7s</td>
+</tr>
+<tr>
+<td><strong>Greedy</strong></td>
+<td><code>cold_start</code></td>
+<td>200</td>
+<td>87</td>
+<td>43.5%</td>
+<td>246</td>
+<td>15</td>
+<td>14</td>
+<td>1</td>
+<td>0.50</td>
+<td>18.7s</td>
+</tr>
+<tr>
+<td><strong>Greedy</strong></td>
+<td><code>delayed</code></td>
+<td>200</td>
+<td>91</td>
+<td>45.5%</td>
+<td>198</td>
+<td>19</td>
+<td>16</td>
+<td>2</td>
+<td>1.00</td>
+<td>18.1s</td>
+</tr>
+<tr>
+<td><strong>Greedy</strong></td>
+<td><code>shift</code></td>
+<td>200</td>
+<td>92</td>
+<td>46.0%</td>
+<td>198</td>
+<td>19</td>
+<td>17</td>
+<td>1</td>
+<td>0.50</td>
+<td>24.8s</td>
+</tr>
+<tr>
+<td><strong>Greedy</strong></td>
+<td><code>drift</code></td>
+<td>200</td>
+<td>92</td>
+<td>46.0%</td>
+<td>198</td>
+<td>16</td>
+<td>13</td>
+<td>1</td>
+<td>0.50</td>
+<td>24.3s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><code>development</code></td>
+<td>200</td>
+<td>43</td>
+<td>21.5%</td>
+<td>0</td>
+<td>6</td>
+<td>5</td>
+<td>1</td>
+<td>0.50</td>
+<td>29.4s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><code>sparse</code></td>
+<td>200</td>
+<td>13</td>
+<td>6.5%</td>
+<td>0</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>0.00</td>
+<td>34.7s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><code>cold_start</code></td>
+<td>200</td>
+<td>24</td>
+<td>12.0%</td>
+<td>0</td>
+<td>6</td>
+<td>4</td>
+<td>0</td>
+<td>0.00</td>
+<td>22.7s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><code>delayed</code></td>
+<td>200</td>
+<td>43</td>
+<td>21.5%</td>
+<td>0</td>
+<td>7</td>
+<td>6</td>
+<td>1</td>
+<td>0.50</td>
+<td>21.6s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><code>shift</code></td>
+<td>200</td>
+<td>43</td>
+<td>21.5%</td>
+<td>0</td>
+<td>7</td>
+<td>6</td>
+<td>1</td>
+<td>0.50</td>
+<td>19.8s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><code>drift</code></td>
+<td>200</td>
+<td>43</td>
+<td>21.5%</td>
+<td>0</td>
+<td>6</td>
+<td>5</td>
+<td>1</td>
+<td>0.50</td>
+<td>19.3s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><code>development</code></td>
+<td>200</td>
+<td>93</td>
+<td>46.5%</td>
+<td>198</td>
+<td>16</td>
+<td>15</td>
+<td>0</td>
+<td>0.00</td>
+<td>27.1s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><code>sparse</code></td>
+<td>200</td>
+<td>35</td>
+<td>17.5%</td>
+<td>192</td>
+<td>3</td>
+<td>2</td>
+<td>0</td>
+<td>0.00</td>
+<td>40.2s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><code>cold_start</code></td>
+<td>200</td>
+<td>88</td>
+<td>44.0%</td>
+<td>246</td>
+<td>13</td>
+<td>13</td>
+<td>1</td>
+<td>0.50</td>
+<td>27.5s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><code>delayed</code></td>
+<td>200</td>
+<td>92</td>
+<td>46.0%</td>
+<td>198</td>
+<td>18</td>
+<td>15</td>
+<td>1</td>
+<td>0.50</td>
+<td>23.8s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><code>shift</code></td>
+<td>200</td>
+<td>93</td>
+<td>46.5%</td>
+<td>198</td>
+<td>14</td>
+<td>11</td>
+<td>1</td>
+<td>0.50</td>
+<td>21.3s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><code>drift</code></td>
+<td>200</td>
+<td>93</td>
+<td>46.5%</td>
+<td>198</td>
+<td>16</td>
+<td>15</td>
+<td>0</td>
+<td>0.00</td>
+<td>20.5s</td>
+</tr>
+</tbody>
+</table>
+<h3 id="overall-summary-official-ranking-keys">Overall Summary &amp; Official Ranking Keys</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Primary Score (MSMI / 100)</th>
+<th>Overall Coverage</th>
+<th>Mutual Accept / 100</th>
+<th>Mean Ask Cost</th>
+<th>Mean Inference (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Greedy Baseline</strong></td>
+<td><strong>0.50</strong></td>
+<td><strong>40.8%</strong></td>
+<td><strong>7.58</strong></td>
+<td>205.0</td>
+<td>21.44s</td>
+</tr>
+<tr>
+<td><strong>No-Clarification</strong></td>
+<td><strong>0.33</strong></td>
+<td><strong>17.4%</strong></td>
+<td><strong>2.83</strong></td>
+<td><strong>0.0</strong></td>
+<td>24.57s</td>
+</tr>
+<tr>
+<td><strong>Random-Feasible</strong></td>
+<td><strong>0.25</strong></td>
+<td><strong>41.2%</strong></td>
+<td><strong>6.67</strong></td>
+<td>205.0</td>
+<td>26.73s</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-empirical-findings">Key Empirical Findings</h3>
+<ol>
+<li><strong>Clarification is Essential for Viability</strong>: With zero clarification (<code>no_asks</code>), coverage collapses from $40.8\%$ to $17.4\%$, and MSMI drops to $0.00$ in <code>cold_start</code> and <code>sparse</code>. Clarification unlocks the feasibility graph.</li>
+<li><strong>Quality vs. Pure Volume</strong>: <code>random</code> achieves identical coverage to <code>greedy</code> (~41%) by spending the same budget on asks, but achieves half the primary score ($0.25$ vs $0.50$) because introductions lack compatibility guidance.</li>
+<li><strong>Geography is the Primary Bottleneck</strong>: In <code>sparse</code>, all baselines score $0.00$ MSMI and coverage drops below $18\%$, revealing that spatial fragmentation requires dedicated algorithmic handling.</li>
+</ol>
+<hr />
+<h2 id="7-public-training-pool-inspection-missingness-statistics">7. Public Training Pool Inspection &amp; Missingness Statistics</h2>
+<p>We analyzed all 1,200 members across the six designated training pools (<code>public_01</code> to <code>public_06</code>) at the day 30 snapshot:</p>
+<pre><code>Distribution of Missing Hard Fields per Person:
+[ 0 missing fields ]: ████████████████████████████████ 787 members (65.6%)
+[ 7-8 missing fields]: █ 23 members (1.9%)
+[ 9-11 missing fields]: █████████ 390 members (32.5%)
+</code></pre>
+<ul>
+<li><strong>Overall Hard Field Missingness</strong>: </li>
+<li>Total hard-field instances: $13,200$</li>
+<li><code>observed</code>: $9,066$ ($68.68\%$)</li>
+<li><code>not_asked</code>: $3,563$ ($26.99\%$)</li>
+<li><code>declined</code>: $571$ ($4.33\%$)</li>
+<li>Total unobserved: $4,134$ ($31.32\%$)</li>
+<li><strong>Bimodal Missingness Structure</strong>:</li>
+<li>787 members ($65.6\%$) have fully completed hard profiles ($0$ missing fields).</li>
+<li>390 members ($32.5\%$) have almost completely missing profiles ($9$ to $11$ missing fields).</li>
+<li>413 members ($34.4\%$) have at least one permanently <code>declined</code> hard field.</li>
+<li><strong>Severe Graph Sparsity</strong>:</li>
+<li><strong>Mean feasible pairs per person in a pool of 200</strong>: only <strong>$1.01$</strong> (median: $0$, min: $0$, max: $17$).</li>
+<li><strong>$62.8\%$ of members have ZERO feasible pairs</strong> in their entire pool under current observations!</li>
+<li>In contrast, an average of <strong>$25.15$ pairs per member</strong> are in <code>needs_clarification</code> status, proving that targeted clarification is the single highest-leverage mechanism to expand the feasible graph.</li>
+</ul>
+<hr />
+<h2 id="8-planned-experiments-hypothesis-driven-ablations">8. Planned Experiments &amp; Hypothesis-Driven Ablations</h2>
+<p>In Round 2, we will execute systematic evaluations across multiple seeds ($101, 102, 103$) and all six scenarios:</p>
+<pre><code>                      Experimental Plan Matrix
+  ┌──────────────────────────────────────────────────────────────┐
+  │                    Ablation 1: Allocation                    │
+  │     Global Max-Weight Matching   vs.   Greedy Pair Ranking   │
+  └──────────────────────────────┬───────────────────────────────┘
+                                 │
+  ┌──────────────────────────────┴───────────────────────────────┐
+  │                   Ablation 2: Clarification                  │
+  │   Targeted EVOI Asks   vs.   Blind Static Asks   vs.   No Asks│
+  └──────────────────────────────┬───────────────────────────────┘
+                                 │
+  ┌──────────────────────────────┴───────────────────────────────┐
+  │                     Ablation 3: Patience                     │
+  │     Thresholded Patient Matching  vs.  Immediate Allocation  │
+  └──────────────────────────────────────────────────────────────┘
+</code></pre>
+<ol>
+<li><strong>Ablation 1 (Matching Formulation)</strong>: Fix clarification strategy to Targeted EVOI; compare Global Max-Weight Matching vs. Greedy Pair Ranking.<br />
+<em>Metric of Validation</em>: Higher aggregate MSMI and higher coverage per episode.</li>
+<li><strong>Ablation 2 (Clarification Strategy)</strong>: Fix allocation to Global Matching; compare Targeted EVOI vs. Baseline Blind Queue vs. No Clarification.<br />
+<em>Metric of Validation</em>: Higher MSMI per clarification unit spent (clarification efficiency).</li>
+<li><strong>Ablation 3 (Patience Threshold θ)</strong>: Evaluate immediate assignment ($\theta = 0$) vs. tenure-dependent thresholded matching ($\theta &gt; 0$).<br />
+<em>Metric of Validation</em>: Reduction in low-compatibility introductions and increased late-horizon MSMI.</li>
+</ol>
+<hr />
+<h2 id="9-expected-failure-modes-risk-mitigations">9. Expected Failure Modes &amp; Risk Mitigations</h2>
+<table>
+<thead>
+<tr>
+<th>Failure Mode</th>
+<th>Root Cause in Simulator</th>
+<th>Algorithmic Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spatial Isolation (<code>sparse</code>)</strong></td>
+<td>12 disconnected zones; severe candidate deficits in low-density zones</td>
+<td>Patient waiting for cross-zone arrivals; prioritize multi-zone candidates (<code>acceptable_zones</code> length 2).</td>
+</tr>
+<tr>
+<td><strong>Irrecoverable Declines</strong></td>
+<td>34.4% of candidates have declined hard fields, preventing validation</td>
+<td>Detect unresolvable candidates early; prune them from query queues to eliminate wasted ask budget.</td>
+</tr>
+<tr>
+<td><strong>Concurrency Lockout</strong></td>
+<td>Candidates remain occupied for 15–20 days after an introduction</td>
+<td>Model cycle latency explicitly; avoid pairing high-centrality candidates with low-probability responders.</td>
+</tr>
+<tr>
+<td><strong>Preference Distribution Shift (<code>shift</code> / <code>drift</code>)</strong></td>
+<td>Relative importance of soft attributes inverts or changes at day 35</td>
+<td>Maintain online moving-average logistic feedback models; weight recent feedback over initial priors.</td>
+</tr>
+<tr>
+<td><strong>Candidate Monopolization</strong></td>
+<td>Universally attractive candidates targeted by multiple potential matches</td>
+<td>Global maximum weight matching natively distributes candidates to maximize total system utility.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-product-integration-ethical-governance-note-vouchsafe">10. Product Integration &amp; Ethical Governance Note (Vouchsafe)</h2>
+<p>This decision policy is engineered as an <strong>auditable decision-support engine</strong> for Vouchsafe, not an autonomous agent.</p>
+<ul>
+<li><strong>Explicit Consent &amp; Human Agency</strong>: The engine outputs recommendations with structured rationale; it never initiates contact, commits members, or bypasses member authorization. Introductions require affirmative, uncoerced double opt-in.</li>
+<li><strong>Explainability &amp; Auditing</strong>: Every proposed match carries human-readable justification vectors:<blockquote>
+<p><em>"Candidate A and B share verified weekend evening schedules, mutual long-term relationship goals, and compatible geographic preferences. No hard constraints violated."</em></p>
+</blockquote>
+</li>
+<li><strong>Data Minimization &amp; Privacy Protection</strong>: In compliance with consent principles, the policy requests only attributes strictly necessary to establish eligibility. When a member marks a field <code>'declined'</code>, the refusal is treated as immutable—no synthetic imputation, indirect inference, or behavioral profiling is permitted.</li>
+<li><strong>Assumptions Requiring Real-World Validation</strong>:</li>
+<li><em>Immediate Truth Disclosure</em>: Real members may experience hesitation, recall bias, or evolving preferences rather than instantaneous questionnaire responses.</li>
+<li><em>Deterministic Outcome Windows</em>: Fixed 7-day acceptance and 3-day feedback windows reflect idealized mechanics; real-world workflows require asynchronous, tolerant reminder cadences.</li>
+<li><em>Synthetic Demographic Distributions</em>: Real population distributions exhibit nuanced demographic and geographic clustering that requires local calibration before production deployment.</li>
+</ul>
+</body>
+</html>
