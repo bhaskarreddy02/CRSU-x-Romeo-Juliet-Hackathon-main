@@ -230,6 +230,26 @@ header.app-header {
   justify-content: space-between;
 }
 
+.ledger-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-kicker);
+  opacity: 0.75;
+}
+
+.primary-score .ledger-icon {
+  color: var(--accent-thread);
+  opacity: 1;
+}
+
+.btn svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
 .ledger-number {
   font-family: var(--font-serif-hero);
   font-size: 26px;
@@ -480,17 +500,20 @@ header.app-header {
 
 .tab-btn {
   flex: 1;
-  padding: 12px 0;
+  padding: 12px 6px;
   background: transparent;
   border: none;
   font-family: var(--font-sans-kicker);
   font-size: 9.5px;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-kicker);
   cursor: pointer;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
 }

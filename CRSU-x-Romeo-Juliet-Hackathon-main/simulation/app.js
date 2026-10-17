@@ -184,7 +184,7 @@ class SimulationApp {
       this.reset();
     }
     this.isPlaying = true;
-    this.dom.btnPlay.innerHTML = `<span>⏸</span> Pause Season`;
+    this.dom.btnPlay.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Pause Season`;
     this.dom.btnPlay.classList.add('btn-crimson');
     this.dom.btnPlay.classList.remove('btn-ink');
 
@@ -198,7 +198,7 @@ class SimulationApp {
 
   pause() {
     this.isPlaying = false;
-    this.dom.btnPlay.innerHTML = `<span>▶</span> Conduct Season`;
+    this.dom.btnPlay.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Conduct Season`;
     this.dom.btnPlay.classList.remove('btn-crimson');
     this.dom.btnPlay.classList.add('btn-ink');
     if (this.playTimer) {
@@ -278,7 +278,7 @@ class SimulationApp {
       } else if (e.event === 'date_happened' && e.value === true) {
         this.addEventLog('date', `Day ${currentDay + 1} Date Event`, `Date successfully took place for intro ${e.introduction_id.slice(-6)}!`);
       } else if (e.event === 'second_meeting_intention' && e.value === 'yes') {
-        this.addEventLog('msmi', `Day ${currentDay + 1} MSMI YES!`, `Second meeting intention confirmed by ${e.member_id}! 💖`);
+        this.addEventLog('msmi', `Day ${currentDay + 1} MSMI Confirmed`, `Second meeting intention confirmed by ${e.member_id}.`);
       }
     }
 
@@ -401,10 +401,12 @@ class SimulationApp {
 
         <div class="kicker" style="margin-bottom: 6px;">ACTIONS & CLARIFICATIONS</div>
         <div style="display: flex; gap: 8px;">
-          <button id="btnAskBundle" class="btn btn-ink" style="flex: 1; font-size: 10px; padding: 6px;" title="Clarify reciprocal hard constraints bundle (-3 units)">
+          <button id="btnAskBundle" class="btn btn-ink" style="flex: 1; font-size: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" title="Clarify reciprocal hard constraints bundle (-3 units)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
             Ask Bundle (-3)
           </button>
-          <button id="btnAskGoal" class="btn" style="flex: 1; font-size: 10px; padding: 6px;" title="Clarify primary soft goal (-1 unit)">
+          <button id="btnAskGoal" class="btn" style="flex: 1; font-size: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" title="Clarify primary soft goal (-1 unit)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
             Ask Goal (-1)
           </button>
         </div>
@@ -474,7 +476,8 @@ class SimulationApp {
               <div class="partner-name">${o.member_id} (${o.age}${o.gender[0].toUpperCase()}, ${o.zone})</div>
               <div class="partner-score">Score: ${(p.score * 100).toFixed(0)}% · <span style="color: ${color}">${p.status}</span></div>
             </div>
-            <button class="btn btn-ink" style="font-size: 9.5px; padding: 4px 10px;" onclick="event.stopPropagation(); window.simApp.pairWith('${member.member_id}', '${o.member_id}')">
+            <button class="btn btn-ink" style="font-size: 9.5px; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;" onclick="event.stopPropagation(); window.simApp.pairWith('${member.member_id}', '${o.member_id}')">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
               Pair
             </button>
           </div>
@@ -531,8 +534,9 @@ class SimulationApp {
       <div style="color: var(--text-muted); font-size: 11px; margin-top: 2px;">
         ${m.age} yrs · ${m.gender} · ${m.zone.toUpperCase()}
       </div>
-      <div style="font-size: 10px; font-weight: 600; color: ${m.available ? 'var(--accent-sage)' : 'var(--accent-amber)'}; margin-top: 3px;">
-        ${m.available ? '● Available in Registry' : '○ Busy / Unavailable'}
+      <div style="font-size: 10px; font-weight: 600; color: ${m.available ? 'var(--accent-sage)' : 'var(--accent-amber)'}; margin-top: 4px; display: flex; align-items: center; gap: 5px;">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: ${m.available ? 'var(--accent-sage)' : 'var(--accent-amber)'}; display: inline-block;"></span>
+        ${m.available ? 'Available in Registry' : 'Busy / Unavailable'}
       </div>
     `;
     this.dom.tooltip.style.display = 'block';
@@ -543,9 +547,26 @@ class SimulationApp {
   addEventLog(type, title, desc) {
     const card = document.createElement('div');
     card.className = `chronicle-card ${type}`;
+
+    let iconSvg = '';
+    if (type === 'match') {
+      iconSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
+    } else if (type === 'date') {
+      iconSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
+    } else if (type === 'msmi') {
+      iconSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>`;
+    } else if (type === 'ask') {
+      iconSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+    } else {
+      iconSvg = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
+    }
+
     card.innerHTML = `
       <div class="chronicle-top">
-        <span class="chronicle-title">${title}</span>
+        <span class="chronicle-title" style="display: inline-flex; align-items: center; gap: 5px;">
+          ${iconSvg}
+          ${title}
+        </span>
         <span class="chronicle-day">Day ${this.sim.day}</span>
       </div>
       <div class="chronicle-body">${desc}</div>
