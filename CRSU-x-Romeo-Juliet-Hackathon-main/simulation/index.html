@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Romeo & Juliet · The Introduction Policy Laboratory</title>
+  <meta name="description" content="One introduction, when it's right. Private decision-support engine for sequential introductions, reciprocal consent, and value-of-information clarification.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Authentic Romeo & Juliet Header -->
+  <header class="app-header">
+    <div class="brand-group">
+      <span class="brand-logo">Romeo &amp; Juliet</span>
+      <span class="brand-subtitle">Sequential Matching &amp; EVOI Simulator · Submission Laboratory</span>
+    </div>
+
+    <div class="header-status-group">
+      <!-- Circular Embossed Stamp Motif -->
+      <div class="circular-seal" title="Romeo &amp; Juliet By Hand Seal">
+        <span class="seal-top">ROMEO &amp; JULIET</span>
+        <span class="seal-mid">R&amp;J</span>
+        <span class="seal-bot">BY HAND</span>
+      </div>
+
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span id="dayIndicator">Day 0 / 60 (+40) · Active Decision Phase</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- The Ledger (Metrics HUD) -->
+  <section class="metrics-ledger" id="ledger" aria-label="Introduction Ledger">
+    <div class="ledger-cell primary-score">
+      <div class="ledger-kicker">
+        <span class="kicker">PRIMARY SCORE</span>
+        <span style="font-size: 11px;">🏆</span>
+      </div>
+      <div class="ledger-number highlight-score" id="valMsmiScore">0.00</div>
+      <div class="ledger-desc" id="valMsmiTotal">0 mutual 2nd-meetings</div>
+      <div style="font-family: var(--font-sans-kicker); font-size: 8px; color: var(--text-kicker); margin-top: 2px;">
+        ⏳ Matures 15–25d after match
+      </div>
+    </div>
+
+    <div class="ledger-cell">
+      <div class="ledger-kicker">
+        <span class="kicker">MUTUAL ACCEPTANCES</span>
+        <span style="font-size: 11px;">🤝</span>
+      </div>
+      <div class="ledger-number" id="valMutualAccept">0</div>
+      <div class="ledger-desc" id="valMutualPer100">0.0 / 100 members</div>
+    </div>
+
+    <div class="ledger-cell">
+      <div class="ledger-kicker">
+        <span class="kicker">SOCIETY COVERAGE</span>
+        <span style="font-size: 11px;">👥</span>
+      </div>
+      <div class="ledger-number" id="valCoveragePct">0.0%</div>
+      <div class="ledger-desc" id="valCoverageRatio">0 / 0 members served</div>
+    </div>
+
+    <div class="ledger-cell">
+      <div class="ledger-kicker">
+        <span class="kicker">COMPLETED MEETS</span>
+        <span style="font-size: 11px;">☕</span>
+      </div>
+      <div class="ledger-number" id="valDatesCount">0</div>
+      <div class="ledger-desc">In-person dates attended</div>
+    </div>
+
+    <div class="ledger-cell">
+      <div class="ledger-kicker">
+        <span class="kicker">LETTER BUDGET</span>
+        <span style="font-size: 11px;">✉️</span>
+      </div>
+      <div class="ledger-number" id="valAskBudgetRemaining" style="color: var(--accent-sage);">12 / 12</div>
+      <div class="budget-meter-track">
+        <div class="budget-meter-fill" id="budgetBarFill"></div>
+      </div>
+      <div class="ledger-desc" id="valAskCostTotal">0 units total spent</div>
+    </div>
+
+    <div class="ledger-cell">
+      <div class="ledger-kicker">
+        <span class="kicker">VOUCHSAFE HONOR</span>
+        <span style="font-size: 11px;">🔒</span>
+      </div>
+      <div class="ledger-number" style="color: var(--accent-sage);">100%</div>
+      <div class="ledger-desc">Zero hard violations</div>
+    </div>
+  </section>
+
+  <!-- Controls Toolbar -->
+  <nav class="control-toolbar" aria-label="Simulation Controls">
+    <div class="controls-left">
+      <!-- Midnight Ink Button matching 'FIND YOUR ARCHETYPE' -->
+      <button id="btnPlay" class="btn btn-ink" title="Conduct season in continuous real time">
+        <span>▶</span> Conduct Season
+      </button>
+      <button id="btnStep" class="btn" title="Advance introduction horizon by 1 day">
+        <span>⏭</span> Next Day
+      </button>
+      <button id="btnFastForward" class="btn" title="Run season to conclusion (Day 100)">
+        <span>⚡</span> Run to Day 100
+      </button>
+      <button id="btnReset" class="btn" title="Reset current season">
+        <span>↺</span> Reset Season
+      </button>
+
+      <div class="speed-control-group" style="margin-left: 6px;">
+        <span>Tempo:</span>
+        <input type="range" id="sliderSpeed" class="speed-slider" min="0.5" max="8" step="0.5" value="2" title="Simulation Speed">
+        <span id="speedLabel" style="font-family: var(--font-mono); width: 24px;">2x</span>
+      </div>
+    </div>
+
+    <div class="controls-right">
+      <span class="kicker" style="color: var(--text-editorial);">Registry:</span>
+      <select id="selectDataset" class="select-editorial" style="max-width: 175px;">
+        <option value="synthetic" selected>🎲 Synthetic World (Seed 101)</option>
+        <optgroup label="Official Train Split (Day 30 Snapshot)">
+          <option value="public_01">public_01 (Train)</option>
+          <option value="public_02">public_02 (Train)</option>
+          <option value="public_03">public_03 (Train)</option>
+          <option value="public_04">public_04 (Train)</option>
+          <option value="public_05">public_05 (Train)</option>
+          <option value="public_06">public_06 (Train)</option>
+        </optgroup>
+        <optgroup label="Official Validation Split">
+          <option value="public_07">public_07 (Val)</option>
+          <option value="public_08">public_08 (Val)</option>
+        </optgroup>
+        <optgroup label="Official Test Split">
+          <option value="public_09">public_09 (Test)</option>
+          <option value="public_10">public_10 (Test)</option>
+        </optgroup>
+      </select>
+
+      <span class="kicker" style="color: var(--text-editorial); margin-left: 4px;">Policy:</span>
+      <select id="selectPolicy" class="select-editorial">
+        <option value="submission" selected>⭐ Our Model (Global + EVOI)</option>
+        <option value="greedy">Greedy Baseline</option>
+        <option value="random">Random-Feasible Baseline</option>
+        <option value="no_asks">No-Clarification Baseline</option>
+        <option value="manual">🖐️ Hand Introduction (Manual)</option>
+      </select>
+
+      <span class="kicker" id="labelVariant" style="color: var(--text-editorial); margin-left: 4px;">Scenario:</span>
+      <select id="selectVariant" class="select-editorial">
+        <option value="development" selected>development</option>
+        <option value="sparse">sparse (12 Regions)</option>
+        <option value="cold_start">cold_start</option>
+        <option value="delayed">delayed</option>
+        <option value="shift">shift</option>
+        <option value="drift">drift</option>
+      </select>
+
+      <span class="kicker" id="labelSeed" style="color: var(--text-editorial); margin-left: 4px;">Seed:</span>
+      <input type="number" id="inputSeed" class="select-editorial" style="width: 58px;" value="101" title="Simulation Seed">
+    </div>
+  </nav>
+
+  <!-- Main Workspace Area -->
+  <main class="main-layout">
+    <!-- Map Canvas Area -->
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="simCanvas"></canvas>
+
+      <!-- Hover Tooltip -->
+      <div id="simTooltip" class="sim-tooltip"></div>
+
+      <!-- Vintage Map Legend -->
+      <div class="canvas-overlay-legend">
+        <div class="kicker" style="margin-bottom: 2px;">CANDIDATE DISPOSITION</div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: #385640; border: 1px solid #283e2e;"></span>
+          Available in Registry
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: #a13636; border: 1px solid #7a2828;"></span>
+          Active Introduction (Crimson Thread)
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: #b07d34; border: 1px solid #845d25;"></span>
+          Awaiting Response / On Date
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: #9e978a; border: 1px solid #7d7768;"></span>
+          Exited Pool
+        </div>
+        <div style="font-family: var(--font-sans-kicker); font-size: 8px; color: var(--text-kicker); margin-top: 4px;">
+          DRAG TO PAN · SCROLL TO ZOOM · CLICK TO INSPECT
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar (The Society Register) -->
+    <aside class="sidebar-panel" id="dossier">
+      <!-- Tabs -->
+      <div class="sidebar-tabs" role="tablist">
+        <button class="tab-btn active" data-tab="tabInspector" role="tab" aria-selected="true">
+          Member Dossier
+        </button>
+        <button class="tab-btn" data-tab="tabEvents" role="tab" aria-selected="false">
+          The Chronicle
+        </button>
+        <button class="tab-btn" data-tab="tabFunnel" role="tab" aria-selected="false">
+          Funnel Ledger
+        </button>
+      </div>
+
+      <!-- Tab 1: Member Dossier -->
+      <div id="tabInspector" class="tab-content active" role="tabpanel">
+        <div id="inspectorContent">
+          <div class="inspector-empty">
+            <div class="inspector-empty-seal">R&J</div>
+            <div style="font-family: var(--font-serif-hero); font-size: 16px; font-style: italic; color: var(--text-editorial);">
+              No Candidate Selected
+            </div>
+            <div style="font-family: var(--font-serif-body); font-size: 13.5px; line-height: 1.5;">
+              Select any candidate node upon the registry map to examine verified reciprocal constraints, romantic preferences, and eligible introductions.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: The Chronicle (Live Event Feed) -->
+      <div id="tabEvents" class="tab-content" role="tabpanel">
+        <div class="chronicle-feed" id="eventFeed"></div>
+      </div>
+
+      <!-- Tab 3: Funnel Ledger -->
+      <div id="tabFunnel" class="tab-content" role="tabpanel">
+        <div class="kicker" style="margin-bottom: 6px;">CONVERSION FUNNEL</div>
+        <div style="font-family: var(--font-serif-hero); font-size: 18px; font-style: italic; margin-bottom: 16px; color: var(--text-ink);">
+          The Journey to a Second Meeting
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-header">
+            <span>Arrived Members in Pool</span>
+            <span id="funnelArrived" style="font-family: var(--font-mono); font-weight: 600;">0</span>
+          </div>
+          <div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width: 100%; background: #385640;"></div></div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-header">
+            <span>Served by Private Introduction</span>
+            <span id="funnelServed" style="font-family: var(--font-mono); font-weight: 600;">0</span>
+          </div>
+          <div class="funnel-bar-bg"><div id="barServed" class="funnel-bar-fill" style="width: 0%; background: #232536;"></div></div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-header">
+            <span>Mutual Consents (Double Opt-In)</span>
+            <span id="funnelMutual" style="font-family: var(--font-mono); font-weight: 600;">0</span>
+          </div>
+          <div class="funnel-bar-bg"><div id="barMutual" class="funnel-bar-fill" style="width: 0%; background: #a13636;"></div></div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-header">
+            <span>In-Person Dates Occurred</span>
+            <span id="funnelDates" style="font-family: var(--font-mono); font-weight: 600;">0</span>
+          </div>
+          <div class="funnel-bar-bg"><div id="barDates" class="funnel-bar-fill" style="width: 0%; background: #b07d34;"></div></div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-header">
+            <span style="color: var(--accent-thread); font-weight: 600;">Mutual 2nd-Meeting Intention (MSMI)</span>
+            <span id="funnelMsmi" style="font-family: var(--font-mono); font-weight: 700; color: var(--accent-thread);">0</span>
+          </div>
+          <div class="funnel-bar-bg"><div id="barMsmi" class="funnel-bar-fill" style="width: 0%; background: var(--accent-thread);"></div></div>
+        </div>
+
+        <div class="dossier-card" style="margin-top: 24px;">
+          <div class="kicker" style="margin-bottom: 6px;">PROTOCOL CADENCE</div>
+          <div style="font-family: var(--font-serif-body); font-size: 13px; color: var(--text-editorial); line-height: 1.6;">
+            • Active Introduction Horizon: Days 0–59<br>
+            • Extended Observation Window: Days 60–99<br>
+            • Letter Response Window: ≤ 7 days<br>
+            • Meeting Scheduling: ≤ 14 days<br>
+            • Second-Meeting Feedback: ≤ 3 days<br>
+            • MSMI Qualification: ≤ 30 days from match
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Scripts -->
+  <script src="datasets.js"></script>
+  <script src="simulator_engine.js"></script>
+  <script src="visualizer.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
